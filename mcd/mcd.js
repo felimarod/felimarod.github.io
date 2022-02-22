@@ -1,7 +1,7 @@
 var solucion = document.getElementById("solucion")
-document.getElementById("numero1").value = 23;
-document.getElementById("numero2").value = 42;
-document.getElementById("numero3").value = 52;
+//document.getElementById("numero1").value = 23;
+//document.getElementById("numero2").value = 42;
+//document.getElementById("numero3").value = 52;
 var euclides
 var numeros
 
@@ -69,11 +69,11 @@ function hallarValores() {
             listaCombinacionesDiferentes.push("aEuclides" + index)
         } else {
 
-            for (let j = 0; j < listaCombinacionesDiferentes.length; j++) {
-                const parrafo = document.getElementById(listaCombinacionesDiferentes[j]).value;
-                alert(parrafo)
+            //for (let j = 0; j < listaCombinacionesDiferentes.length; j++) {
+                //const parrafo = document.getElementById(listaCombinacionesDiferentes[j]).value;
+                //alert(parrafo)
                 //if(parrafo == listaEuclides)
-            }
+            //}
 
 
         }
