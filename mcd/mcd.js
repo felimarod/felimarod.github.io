@@ -1,14 +1,12 @@
 var solucion = document.getElementById("solucion")
-//document.getElementById("numero1").value = 23;
-//document.getElementById("numero2").value = 42;
-//document.getElementById("numero3").value = 52;
 var euclides
+var bezout
 var numeros
 
 function calcular(){
+    solucion.innerHTML =  ""
     if(verificar()){
         hallarValores()
-        //mostrarResultados()
     }
 }
 
@@ -17,17 +15,18 @@ function verificar(){
     num2 = parseInt(document.getElementById("numero2").value);
     num3 = parseInt(document.getElementById("numero3").value);
 
+    // Verifica que los datos ingresados sean números
+    if(isNaN(num1) || isNaN(num2) || isNaN(num3)){
+        solucion.innerHTML = '<div class="row"><div class="col-3"></div> <div class="col-6 border rounded text-center shadow m-1 p-2"> Por favor ingrese números </div></div>'
+        return false
+    }
+
     numeros = new Array(num1, num2, num3);
-    
-    numeros.forEach(numero => {
-        if(isNaN(numero)){
-            solucion.innerHTML = '<div class="row"><div class="col-3"></div> <div class="col-6 border rounded text-center shadow m-1 p-2"> Por favor ingrese números </div></div>'
-            return false
-        } else if(numero == 0){
+    for (const numero of numeros) 
+        if(numero <= 0){
             solucion.innerHTML = '<div class="row"><div class="col-3"></div> <div class="col-6 border rounded text-center shadow m-1 p-2"> Ingrese números mayores a cero </div></div>'
             return false;
         }
-    });
 
     euclides = new Euclides(numeros)
     
@@ -40,60 +39,56 @@ function verificar(){
 
 function hallarValores() {
     let listaCombinacionesDiferentes = []
-    let combinacionImpresa = false;
+    let stSolucionCompleta = ""
     for(let index = 0; index < euclides.getCombinacionesLineales().length; index++){
+        let stSolucionIndividual = ""
         //console.log(euclides.getCombinacionesLineales()[index], index)
         euclides.hallarMCD(index)
         if(index == 0){
-            stSolucionDiv = '<div class="row"><div class="col-3"></div> <div class="col-6 border rounded text-center shadow m-1 p-2"> <h3>mcd('
+            stSolucionIndividual = '<div class="row"><div class="col-3"></div> <div class="col-6 border rounded text-center shadow m-1 p-2"> <h3>mcd('
             for (let j = 0; j < numeros.length; j++) {
                 const num = numeros[j];
                 if(j == numeros.length-1)
-                    stSolucionDiv += num 
+                    stSolucionIndividual += num 
                 else
-                    stSolucionDiv += num + ", "
+                    stSolucionIndividual += num + ", "
             } 
-            stSolucionDiv += ') = ' + euclides.getResultado() +' </h3> </div></div>'
+            stSolucionIndividual += ') = ' + euclides.getResultado() +' </h3> </div></div>'
         }
 
         //Algoritmo Extendido de Euclides
-        var listaEuclides = ""
-        stSolucionDiv +='<br><div class="row"><div class="col text-center m-1 p-2 shadow rounded"><h3>Algoritmo Extendido de Euclides</h3><p class="text_start" id="aEuclides' + index +'">'
-        euclides.getListaAlgoritmos().forEach(linea => {
-            listaEuclides += linea + "<br>"
+        stSolucionIndividual +='<br><div class = "border rounded m-1 p-2"><div class="row m-4"><div class="col text-center m-1 p-2 shadow rounded"><h3>Algoritmo Extendido de Euclides</h3><p class="text_start" id="aEuclides' + index +'">'
+
+        // Imprimir algoritmos de Euclides en una lista
+        euclides.getListaDivisiones().forEach(operacion => {
+            stSolucionIndividual += operacion.dividendo + " = " + operacion.divisor + " x " + operacion.cociente + " + " + operacion.residuo + "<br>"
         });
-        stSolucionDiv += listaEuclides
-        stSolucionDiv +='</p></div>'
-        if(index == 0){
-            combinacionImpresa = false
-            listaCombinacionesDiferentes.push("aEuclides" + index)
-        } else {
+        stSolucionIndividual +='</p></div>'
 
-            //for (let j = 0; j < listaCombinacionesDiferentes.length; j++) {
-                //const parrafo = document.getElementById(listaCombinacionesDiferentes[j]).value;
-                //alert(parrafo)
-                //if(parrafo == listaEuclides)
-            //}
-
-
-        }
-
+        bezout = new Bezout(euclides.getListaDivisiones(), euclides.getNumeros(), euclides.getResultado())
+        bezout.realizarCombinacionLineal()
 
         //Identidad de Bezout
-        stSolucionDiv +='<div class="col text-center m-1 p-2 shadow rounded"><h3>Identidad de Bezout</h3><p class="text_start" id="iBezout' + index +'">'
-        stSolucionDiv +='</p></div>'
+        stSolucionIndividual +='<div class="col text-center m-1 p-2 shadow rounded"><h3>Identidad de Bezout</h3><p class="text_start" id="iBezout' + index +'">'
+        for (const linea of bezout.getListaIdentidades()) {
+            stSolucionIndividual += linea[0] + " = " + linea[1] + " - " + linea[2] + "(" + (-linea[3]) + ")<br>"
+        }
+        stSolucionIndividual +='</p></div>'
 
         
         //Combinacion Lineal
-        stSolucionDiv += '<div class="col text-center m-1 p-2 shadow rounded"><h3>Combinación Lineal</h3><p class="text_start" id="cLineal' + index +'">'
+        stSolucionIndividual += '<div class="col text-center m-1 p-2 shadow rounded"><h3>Combinación Lineal</h3><p class="text_start" id="cLineal' + index +'">'
+        for(const linea of bezout.getListaRegresion()){
+            stSolucionIndividual += linea + "<br>"
+        }
+        stSolucionIndividual +='</p></div></div>'
 
-        stSolucionDiv +='</p></div></div>'
+        stSolucionIndividual += '<div class="row"><div class="col-2"></div> <div class="col-8 border rounded text-center shadow m-1 p-2"> <h2>Resultado ' + (listaCombinacionesDiferentes.length + 1) + '</h2> '+ bezout.getCombinacionLineal() +'</div></div></br></div><br>'
 
+        if(!listaCombinacionesDiferentes.includes(bezout.getCombinacionLineal())){
+            listaCombinacionesDiferentes.push(bezout.getCombinacionLineal())
+            stSolucionCompleta += stSolucionIndividual
+        }
     }
-    //document.getElementById("solucion").innerHTML = ''
-    solucion.innerHTML= stSolucionDiv + "<br><br>"
-}
-
-function mostrarResultados(){
-
+    solucion.innerHTML+=  stSolucionCompleta + "<br><br>"
 }

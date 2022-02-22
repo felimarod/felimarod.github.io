@@ -1,6 +1,5 @@
 var combinacionesNumeros;
 var listaDivisiones = [];
-var listaAlgoritmos = [];
 
 class Euclides {
     constructor(numeros){
@@ -45,14 +44,17 @@ class Euclides {
                 this.resultado = mcd(numerosOrdenados[i], this.resultado);
         return this.resultado;
     }
+    getNumeros = function (){
+        return this.numeros
+    }
     getResultado = function (){
         return this.resultado
     }
     getCombinacionesLineales = function (){
         return this.combinacionesLineales
     }
-    getListaAlgoritmos = function (){
-        return listaAlgoritmos
+    getListaDivisiones = function (){
+        return listaDivisiones
     }
     hallarMCD = function(n){
         let numerosOrdenados = this.combinacionesLineales[n];
@@ -64,16 +66,10 @@ class Euclides {
             else
                 this.resultado = mcd(numerosOrdenados[i], this.resultado);
         
-        // Guardar algoritmos de Euclides en una lista
-        listaAlgoritmos = []
-        for (const linea of listaDivisiones) {
-            let stLinea = linea.dividendo + " = " + linea.divisor + " x " + linea.cociente + " + " + linea.residuo
-            listaAlgoritmos.push(stLinea)
-        }
     }
 }
 
-mcd = function(mayor, menor){
+function mcd(mayor, menor){
     if(mayor < menor){
         let aux = menor;
         menor = mayor;
@@ -96,20 +92,11 @@ mcd = function(mayor, menor){
         }
         listaDivisiones.push(auxDic)
     }
-    listaAlgoritmos = [];
     return listaDivisiones[listaDivisiones.length - 1].divisor;
 }
 
-cantidadAlgoritmos = function (num1, num2){
-    listaAlgoritmos = []
+function cantidadAlgoritmos(num1, num2){
     listaDivisiones = []
     mcd(num1, num2);
-    // Guardar divisiones como algoritmo de Euclides
-    for (let index = 0; index < listaDivisiones.length; index++) {
-        const element = listaDivisiones[index];
-        listaAlgoritmos.push(
-            element.divisor + " = " + element.dividendo + " x " + element.cociente + " + " + element.residuo
-        )
-    }
-    return listaAlgoritmos.length;
+    return listaDivisiones.length
 }
